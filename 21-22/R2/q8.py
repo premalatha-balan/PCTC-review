@@ -32,5 +32,6 @@ vote_out = min(names_votes.values())
 name = [key for key in names_votes if names_votes[key] == vote_out]
 #print(names_votes)
 #print(name, vote_out)
+name.sort()
 
 for i in name: print(i)
