@@ -1,66 +1,76 @@
+X = "XXX"
+O = "OOO"
 
-"""a = [0, 2, 0, 2, 1, 3, 0, 1, 0]
-c = [2, 1, 3, 0, 1]
-b = ''.join(map(str, a)).index(''.join(map(str, c)))
-print(b)"""
 
-def findPattern (in_lst):
-  row_indx=[]
-  p1_indx =[]
-  for i in range(10): 
-    counter = 0
-    counter+=in_lst[i].count("1")
-    if counter!=0:
-      row_indx.append(i)
-      print(f"counter is {counter} at {i} and the str is {in_lst[i]}")
-      temp1 = 0
-      temp0 = 0
-      while (temp1 != 9 and temp1!=-1) or (temp0 != 9 and temp0!=-1):
-        temp1 = in_lst[i].find("1", temp0)
-        p1_indx.append(temp1)
-        temp0 = in_lst[i].find("0",temp1)
-        p1_indx.append(temp0-1)
-        print(f"temp1 = {temp1} and temp0 ={temp0} ") 
-    else:
-      print(f"the entire string for {i} is {in_lst[i]} ")
-  row_indx = list(dict.fromkeys(row_indx))
-  p1_indx = list(dict.fromkeys(p1_indx))
-  if -1 in row_indx: row_indx.remove(-1)
-  if -1 in p1_indx: p1_indx.remove(-1)
-  row_indx.sort()
-  p1_indx.sort()
-  print(f"rows in the pattern {row_indx}")
-  print(f"columns in the pattern {p1_indx} ")
-  
-  out_pattern=in_lst[row_indx[0]:row_indx[-1]+1]
-  print(f"the pattern is {out_pattern} ")
-  for l in range(len(out_pattern)):
-    out_pattern[l]=out_pattern[l][p1_indx[0]:p1_indx[-1]+1]
-  #[p1_indx[0]:p1_indx[-1]]
-  print(f"the pattern is {out_pattern} ")
-  print(f"the pattern is {out_pattern} ")
-  return(out_pattern)
-    
+def winning(win, p1, p2):
+  X = "XXX"
+  O = "OOO"
+  if win == O: p1 += 1
+  if win == X: p2 += 1
+  return (p1, p2)
 
-firstgrid = [input() for i in range(10)]
 
-subseq= ["0" for i in range(5)]
-subseq[0] = [input() for i in range(10)]
-subseq[1] = [input() for i in range(10)]
-subseq[2] = [input() for i in range(10)]
-subseq[3] = [input() for i in range(10)]
-subseq[4] = [input() for i in range(10)]
+column = lambda grid, i: [grid[k][i] for k in range(4)]
 
-#countf=findPattern(firstgrid)
-pattern_grid=findPattern(firstgrid)
-print(f"the pattern grid is {firstgrid}")
+d0033 = lambda grid: [grid[k][k] for k in range(4)]
 
-count_pattern = 0
-for i in range(5):
-  if pattern_grid == findPattern(subseq[i]): 
-    print(f"I am here at {i+1}")
-    count_pattern+=1
-    print(f"pattern matches for the grid {i+1} ")
-  else: print(f"pattern doesn't match for the grid {i+1} ")
+d0330 = lambda grid: [grid[k][0 - k - 1] for k in range(4)]
 
-print(f"now of pattern matches is {count_pattern} ")
+d0123 = lambda grid: [grid[k][k + 1] for k in range(3)]
+
+d1032 = lambda grid: [grid[k + 1][k] for k in range(3)]
+
+d0220 = lambda grid: [grid[k][0 - k - 2] for k in range(3)]
+
+d1331 = lambda grid: [grid[k + 1][0 - k - 1] for k in range(3)]
+
+grid = [["" for i in range(4)] for j in range(4)]
+grid_index = {"a": 0, "b": 1, "c": 2, "d": 3, "1": 3, "2": 2, "3": 1, "4": 0}
+
+play = [input() for i in range(16)]
+
+for i in range(0, 16, 2):
+  r, c = grid_index[play[i][0]], grid_index[play[i][1]]
+  grid[r][c] = "O"
+
+  r, c = grid_index[play[i + 1][0]], grid_index[play[i + 1][1]]
+  grid[r][c] = "X"
+
+for i in range(4):
+  print(grid[i])
+
+p1, p2 = 0, 0
+print(p1, p2)
+
+for i in range(4):
+  win = "".join(grid[i])[:-1]
+  p1, p2 = winning(win, p1, p2)
+  print(f"first cut is {win} and p1 = {p1}, p2 = {p2} ")
+  win = "".join(grid[i])[1:]
+  p1, p2 = winning(win, p1, p2)
+  print(f"second cut is {win} and p1 = {p1}, p2 = {p2} ")
+
+  colc = column(grid, i)
+  win = "".join(colc)[:-1]
+  #print(f"win = {win} ")
+  p1, p2 = winning(win, p1, p2)
+  print(f"first column cut is {win} and p1 = {p1}, p2 = {p2} ")
+  win = "".join(colc)[1:]
+  p1, p2 = winning(win, p1, p2)
+  print(f"second column cut is {win} and p1 = {p1}, p2 = {p2} ")
+
+win = "".join(d0033(grid))[:-1]
+p1, p2 = winning(win, p1, p2)
+print(f"first diag cut is {win} and p1 = {p1}, p2 = {p2} ")
+win = "".join(d0033(grid))[1:]
+p1, p2 = winning(win, p1, p2)
+print(f"second diag cut is {win} and p1 = {p1}, p2 = {p2} ")
+
+win = "".join(d0330(grid))[:-1]
+p1, p2 = winning(win, p1, p2)
+print(f"first diag2 cut is {win} and p1 = {p1}, p2 = {p2} ")
+win = "".join(d0330(grid))[1:]
+p1, p2 = winning(win, p1, p2)
+print(f"second diag2 cut is {win} and p1 = {p1}, p2 = {p2} ")
+
+#Now count the other diags. There are four more of them.
