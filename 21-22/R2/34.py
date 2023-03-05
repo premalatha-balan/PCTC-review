@@ -1,0 +1,1 @@
+listOfEmail = [map("".join([str(names[i]), tail]), names) for i in range(len(names))]
